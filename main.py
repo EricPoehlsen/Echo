@@ -39,17 +39,28 @@ class EchoBot(object):
 
         while 1:
             raw = self.irc.recv()
-            
+
+            # sometimes messages come in bulk!
+            raw = raw.split("\n")
             for msg in raw:
                 self.parser(msg)
  
     def parser(self, raw):
+        """ this parses the raw irc messages 
+        
+        Args: 
+            raw (str): an irc message
+        """
+
+        # remove junk
         if len(raw.split(" ")) < 2:
             return
 
+        # add a sender to 'senderless' commands
         if not raw.startswith(":"):
             raw = ":server " + raw
 
+        # split the irc string into components
         sender, command, rawmessage = raw.split(" ", maxsplit=2)
         if " :" in rawmessage:
             receiver, msg = rawmessage.split(" :", maxsplit=1)
@@ -75,9 +86,6 @@ class EchoBot(object):
             self.irc.join(self.channel)
             self.irc.identify(self.nickname, self.password)
             self.irc.mode(self.nickname, "B")
-
-        if "433" in msg and msg.startswith(":services"):
-            self.irc.identify(self.nickname, self.password)
 
         if sender.startswith(":Eric!"):
             if "!shutdown" in msg:

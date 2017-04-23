@@ -8,8 +8,26 @@ class IRC:
         self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def send(self, msg):
-        print("OUT: ", msg, end="")
+        """ sends a raw message to the server
+        
+        Note:
+            Commands are implemented as separate methods and will
+            call the send method.
+        
+        Args:
+            msg (str): the raw message to send
+        """
+
         self.irc.send(bytes(msg, "utf-8"))
+        print("OUT: ", msg, end="")
+
+    def recv(self):
+        """ This is the socket listener 
+        
+        Returns str 
+        """
+        msg = str(self.irc.recv(2040), "utf-8")  # receive the text
+        return msg
 
     def privmsg(self, reciever, msg):
         self.send("PRIVMSG " + reciever + " " + msg + "\n")
@@ -27,15 +45,6 @@ class IRC:
         self.send(nick_msg)
         join_msg = "JOIN " + channel + "\n"
         self.send(join_msg)
-
-    def recv(self):
-        msg = str(self.irc.recv(2040), "utf-8")  # receive the text
-
-        msg = msg.split("\n")
-        for line in msg:
-            pass
-            # print("IN: ", line)
-        return msg
 
     def join(self, channel):
         self.send("JOIN " + channel + "\n")
