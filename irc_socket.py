@@ -8,11 +8,14 @@ class IRC:
         self.irc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def send(self, msg):
-        print("OUT: ", msg)
+        print("OUT: ", msg, end="")
         self.irc.send(bytes(msg, "utf-8"))
 
-    def privmsg(self, chan, msg):
-        self.send("PRIVMSG " + chan + " " + msg + "\n")
+    def privmsg(self, reciever, msg):
+        self.send("PRIVMSG " + reciever + " " + msg + "\n")
+
+    def mode(self, receiver, mode):
+        self.send("MODE " + receiver + " " + mode + "\n")
 
     def connect(self, server, channel, nick, real):
         # defines the socket
@@ -27,7 +30,11 @@ class IRC:
 
     def recv(self):
         msg = str(self.irc.recv(2040), "utf-8")  # receive the text
-        print("IN: ", msg)
+
+        msg = msg.split("\n")
+        for line in msg:
+            pass
+            # print("IN: ", line)
         return msg
 
     def join(self, channel):
@@ -42,8 +49,8 @@ class IRC:
         self.send("VERSION Echo Bot 0.0\n")
 
     def quit(self):
-        self.send("QUIT shutting down ... \n")
+        self.send("QUIT :shutting down ... \n")
 
     def identify(self, nickname, password):
         ident_msg = "IDENTIFY " + password + "\n"
-        self.privmsg("nickserv", ident_msg)
+        self.send(ident_msg)
