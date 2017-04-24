@@ -38,7 +38,7 @@ class IRC:
     def mode(self, receiver, mode):
         self.send("MODE " + receiver + " " + mode)
 
-    def connect(self, server, channel, nick, real):
+    def connect(self, nick=None, real=None, server=None, port=6667):
         # defines the socket
         print("connecting to:" + server)
         self.irc.connect((server, 6667))  # connects to the server

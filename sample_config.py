@@ -1,9 +1,19 @@
-# this is a echo bot config file
-nick: EchoBot
-pass: password
-real: EchoBot
+# THIS IS THE PRIMARY ECHO BOT CONFIG FILE!
+
+# IDENTITY
+NICKNAME = "EchoBot"
+ALT_NICK = "EchoBot__"
+PASSWORD = "password"
+REALNAME = "EchoBot"
+USERINFO = ""
 
 # connections
-server: irc.example.com
-port: 6667
-channels: #example
+SERVER = "irc.example.com"
+PORT = 6667
+CHANNELS = [
+    "#example",
+    "#channel"
+    ]
+
+# the bosses
+ADMINS = ["AdminNick"]

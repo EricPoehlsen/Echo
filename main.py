@@ -1,40 +1,18 @@
 from irc_socket import IRC
+import config as C
+import messages as M
 
 
 class EchoBot(object):
     def __init__(self):
         self.irc = IRC()
 
-        self.server = ""
-        self.channel = ""
-        self.nickname = ""
-        self.password = ""
-        self.realname = ""
-
-    def getConfig(self):
-        with open(file="config", mode="r", encoding="utf-8") as file:
-            for line in file:
-                if ":" not in line:
-                    continue
-                setting, value = line.split(":")
-                settings = ["nick", "name", "pass", "server", "channels"]
-                if setting not in settings:
-                    continue
-
-                value = value.strip()
-                if setting == "nick": self.nickname = value
-                if setting == "name": self.realname = value
-                if setting == "pass": self.password = value
-                if setting == "server": self.server = value
-                if setting == "channels": self.channel = value
-
     def run(self):
 
         self.irc.connect(
-            self.server,
-            self.channel,
-            self.nickname,
-            self.realname
+            C.SERVER,
+            C.NICKNAME,
+            C.REALNAME
         )
 
         while 1:
@@ -91,9 +69,9 @@ class EchoBot(object):
 
         if command == "376":
             # handle after the end of MOTD
-            self.irc.join(self.channel)
-            self.irc.identify(self.password)
-            self.irc.mode(self.nickname, "B")
+            self.irc.join(C.CHANNELS[0])
+            self.irc.identify(C.PASSWORD)
+            self.irc.mode(C.NICKNAME, "B")
 
         if "test" in msg:
             for letter in msg:
@@ -106,12 +84,8 @@ class EchoBot(object):
         if msg.startswith("!") and command != "NOTICE":
             self.commandHandler(sender_nick, msg)
 
-        if command == "PRIVMSG" and self.channel == receiver and "hello" in msg:
-            self.irc.privmsg(self.channel, "Hello!")
-
     def commandHandler(self, nick, msg):
-        if nick in self.admins
-        if sender.startswith(":Eric!"):
+        if nick in C.ADMINS:
             if "!shutdown" in msg:
                 self.irc.quit()
                 return
@@ -123,7 +97,6 @@ class EchoBot(object):
                 receiver = msg.split(" ")[0]
                 msg = msg.split(" ", maxsplit=1)[1]
                 self.irc.ctcp_send(receiver, msg)
-
 
     def ctcpHandler(self, sender_nick, msg):
         if msg.upper().startswith(chr(1)+"VERSION"):
@@ -142,13 +115,9 @@ class EchoBot(object):
         elif msg.upper().startswith(chr(1)+"ACTION"):
             pass
 
-        else:
-            self.irc.ctcp_error(sender_nick, msg, self.nickname)
-
 
 def main():
     echo = EchoBot()
-    echo.getConfig()
     echo.run()
 
 if __name__ == '__main__':
